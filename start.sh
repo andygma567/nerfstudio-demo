@@ -13,10 +13,11 @@ then
     service ssh start
 fi
 
-if [[ $JUPYTER_PASSWORD ]]
+
+if [[ -n $JUPYTER_PASSWORD ]]
 then
     cd /
     jupyter lab --allow-root --no-browser --port=8888 --ip=* --ServerApp.terminado_settings='{"shell_command":["/bin/bash"]}' --ServerApp.token=$JUPYTER_PASSWORD --ServerApp.allow_origin=* --ServerApp.preferred_dir=/workspace
 else
-    sleep infinity
+    jupyter lab --allow-root --no-browser --port=8888 --ip=* --ServerApp.terminado_settings='{"shell_command":["/bin/bash"]}' --ServerApp.allow_origin=* --ServerApp.preferred_dir=/workspace
 fi

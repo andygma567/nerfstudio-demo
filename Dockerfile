@@ -17,11 +17,23 @@ RUN apt-get update
 # Install pip
 RUN apt-get install -y python3-pip
 
+# Upgrade pip to the latest version
+RUN pip3 install --no-cache-dir --upgrade pip
+
+# Uninstall torch, torchvision, functorch, and tiny-cuda-nn
+RUN pip3 uninstall -y torch torchvision functorch tinycudann
+
+# Reinstall specific versions of torch and torchvision
+RUN pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
+
 # Install JupyterLab
 RUN pip3 install jupyterlab
 
 # Install ipywidgets
 RUN pip3 install ipywidgets
+
+# Install nerfstudio
+RUN pip3 install nerfstudio
 
 # Add the start.sh script to the container
 ADD start.sh /
