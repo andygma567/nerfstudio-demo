@@ -35,6 +35,10 @@ RUN pip3 install ipywidgets
 # Install nerfstudio
 RUN pip3 install nerfstudio
 
+# Install ninja and tiny-cuda-nn
+# These two packaages may actually not be needed
+RUN pip3 install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
+
 # Add the start.sh script to the container
 ADD start.sh /
 
