@@ -24,6 +24,8 @@ RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 uninstall -y torch torchvision functorch tinycudann
 
 # Reinstall specific versions of torch and torchvision
+# This specific version is needed to run the nerfstudio 
+# according to the instructions in their docs. 
 RUN pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
 
 # Install JupyterLab
