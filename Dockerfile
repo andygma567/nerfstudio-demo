@@ -14,6 +14,9 @@ USER root
 # Update the package lists
 RUN apt-get update
 
+# Install tree
+RUN apt-get install -y tree
+
 # Install pip
 RUN apt-get install -y python3-pip
 
@@ -37,9 +40,8 @@ RUN pip3 install ipywidgets
 # Install nerfstudio
 RUN pip3 install nerfstudio
 
-# Install ninja and tiny-cuda-nn
-# These two packaages may actually not be needed
-RUN pip3 install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
+# Install mlflow libraries
+RUN pip3 install mlflow psutil pynvml databricks-sdk
 
 # Add the start.sh script to the container
 ADD start.sh /
