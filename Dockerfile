@@ -43,6 +43,9 @@ RUN pip3 install nerfstudio
 # Install mlflow libraries
 RUN pip3 install mlflow psutil pynvml databricks-sdk
 
+# Add test-databricks-connection.py to the container
+ADD test-databricks-connection.py /
+
 # Add the start.sh script to the container
 ADD start.sh /
 
