@@ -8,43 +8,19 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND noninteractive
 ENV SHELL /bin/bash
 
-# Change the user to root
+# Change the user to root so that I don't need to use sudo
 USER root
 
-# Update the package lists
-RUN apt-get update
+# Set up the requirements for using nerfstudio
+RUN apt-get update && \
+    apt-get install -y tree python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118 && \
+    pip3 install nerfstudio
 
-# Install tree
-RUN apt-get install -y tree
-
-# Install pip
-RUN apt-get install -y python3-pip
-
-# Upgrade pip to the latest version
-RUN pip3 install --no-cache-dir --upgrade pip
-
-# Uninstall torch, torchvision, functorch, and tiny-cuda-nn
-RUN pip3 uninstall -y torch torchvision functorch tinycudann
-
-# Reinstall specific versions of torch and torchvision
-# This specific version is needed to run the nerfstudio 
-# according to the instructions in their docs. 
-RUN pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
-
-# Install JupyterLab
-RUN pip3 install jupyterlab
-
-# Install ipywidgets
-RUN pip3 install ipywidgets
-
-# Install nerfstudio
-RUN pip3 install nerfstudio
-
-# Install mlflow libraries
-RUN pip3 install mlflow psutil pynvml databricks-sdk
-
-# Add test-databricks-connection.py to the container
-ADD test-databricks-connection.py /
+# These are extra packages that are not required for nerfstudio
+RUN pip3 install jupyterlab ipywidgets mlflow psutil pynvml databricks-sdk
 
 # Add the start.sh script to the container
 ADD start.sh /

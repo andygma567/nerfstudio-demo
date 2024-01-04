@@ -1,0 +1,18 @@
+apiVersion: skaffold/v4beta8
+kind: Config
+metadata:
+  name: nerfstudio-demo
+build:
+  local:
+    push: false
+  artifacts:
+    - image: pipelinepilot/runpod-template-images
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - '**/start.sh'
+          - '**/test-databricks-connection.py'
+manifests:
+  rawYaml:
+    - my-pod.yml

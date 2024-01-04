@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: runpod-template-images-pod
+  labels:
+    app: runpod-template-images
+spec:
+  containers:
+  - name: runpod-template-images-container
+    image: pipelinepilot/runpod-template-images
+    ports:
+    - containerPort: 8888
