@@ -1,5 +1,5 @@
 # Use dromni/nerfstudio:0.3.4 as the base image
-FROM dromni/nerfstudio:0.3.4
+FROM dromni/nerfstudio:main
 
 # Set bash as the default shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

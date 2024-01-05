@@ -7,12 +7,12 @@ import psutil
 # Parse command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--data-path", help="Path to the video data file", default="~/workspace/video.mp4"
+    "--data-path", help="Path to the video data file", default="~/video.mp4"
 )
 parser.add_argument(
     "--processed-data-dir",
     help="Path to the processed data directory",
-    default="~/workspace/",
+    default="~/",
 )
 args = parser.parse_args()
 
@@ -64,8 +64,6 @@ with mlflow.start_run() as run:
             DATA_PATH,
             "--output-dir",
             PROCESSED_DATA_DIR,
-            "--matching-method",
-            "sequential",
         ]
     )
     preprocess_end_time = time.time()
