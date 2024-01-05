@@ -1,7 +1,10 @@
+import re
 import mlflow
 import time
 import subprocess
 import argparse
+import psutil
+
 # Parse command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--data-path", help="Path to the video data file")
@@ -24,8 +27,23 @@ mlflow.set_experiment("/check-databricks-connection")
 mlflow.enable_system_metrics_logging()
 
 with mlflow.start_run() as run:
-    subprocess.run(["ns-process-data", "video", "--data", DATA_PATH, "--output-dir", PROCESSED_DATA_DIR])
+    # Check CPU cores
+    cpu_cores = psutil.cpu_count()
+    mlflow.log_param("cpu_cores", cpu_cores)
+    
+    # Check total available RAM
+    ram_info = psutil.virtual_memory()
+    mlflow.log_param("ram_total", ram_info.total)
+    mlflow.log_param("ram_available", ram_info.available)
 
+    # Check GPU
+    try:
+        gpu_info_output = subprocess.check_output("nvidia-smi", shell=True).decode('utf-8')
+        mlflow.log_param("gpu_info", gpu_info_output.strip())
+    except subprocess.CalledProcessError:
+        mlflow.log_param("gpu_info", "nvidia-smi command not found or no NVIDIA GPU detected")
+
+    # execute the preprocessing and training steps
     preprocess_start_time = time.time()
     subprocess.run(["ns-process-data", "video", "--data", DATA_PATH, "--output-dir", PROCESSED_DATA_DIR])
     preprocess_end_time = time.time()
