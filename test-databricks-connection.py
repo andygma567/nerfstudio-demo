@@ -34,8 +34,8 @@ with mlflow.start_run() as run:
 
     # Check total available RAM
     ram_info = psutil.virtual_memory()
-    mlflow.log_param("ram_total", ram_info.total)
-    mlflow.log_param("ram_available", ram_info.available)
+    total_ram_gb = ram_info.total / (1024 ** 3)
+    mlflow.log_param("ram_total (in GB)", total_ram_gb)
 
     # Check GPU
     try:
