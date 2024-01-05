@@ -58,6 +58,8 @@ with mlflow.start_run() as run:
             DATA_PATH,
             "--output-dir",
             PROCESSED_DATA_DIR,
+            "--matching-method",
+            "sequential",
         ]
     )
     preprocess_end_time = time.time()
