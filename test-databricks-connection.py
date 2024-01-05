@@ -6,15 +6,19 @@ import psutil
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--data-path", help="Path to the video data file")
-parser.add_argument("--processed-data-dir", help="Path to the processed data directory")
+parser.add_argument(
+    "--data-path", help="Path to the video data file", default="~/workspace/video.mp4"
+)
+parser.add_argument(
+    "--processed-data-dir",
+    help="Path to the processed data directory",
+    default="~/workspace/",
+)
 args = parser.parse_args()
 
 # Set the global variables based on the command line arguments
-DATA_PATH = args.data_path if args.data_path else "/path/to/video.mp4"
-PROCESSED_DATA_DIR = (
-    args.processed_data_dir if args.processed_data_dir else "/path/to/processed/data"
-)
+DATA_PATH = args.data_path
+PROCESSED_DATA_DIR = args.processed_data_dir
 
 # To set up Databricks CE authentication, we can use the API mlflow.login(),
 # which will prompt you for required information:
@@ -34,7 +38,7 @@ with mlflow.start_run() as run:
 
     # Check total available RAM
     ram_info = psutil.virtual_memory()
-    total_ram_gb = ram_info.total / (1024 ** 3)
+    total_ram_gb = ram_info.total / (1024**3)
     mlflow.log_param("ram_total (in GB)", total_ram_gb)
 
     # Check GPU
@@ -47,6 +51,8 @@ with mlflow.start_run() as run:
         mlflow.log_param(
             "gpu_info", "nvidia-smi command not found or no NVIDIA GPU detected"
         )
+
+    mlflow.set_tag("Dataset", DATA_PATH)
 
     # execute the preprocessing and training steps
     preprocess_start_time = time.time()
@@ -67,7 +73,6 @@ with mlflow.start_run() as run:
     print(f"Execution time: {preprocessing_time} seconds")
 
     mlflow.log_metric("preprocessing_time", preprocessing_time)
-    mlflow.log_artifact(PROCESSED_DATA_DIR)
 
     start_time = time.time()
     subprocess.run(["ns-train", "nerfacto", "--data", PROCESSED_DATA_DIR])
@@ -76,6 +81,5 @@ with mlflow.start_run() as run:
 
     mlflow.log_metric("training_time", execution_time)
     OUTPUTS_DIR = PROCESSED_DATA_DIR + "/outputs/"
-    mlflow.log_artifact(OUTPUTS_DIR)
 
 print(mlflow.MlflowClient().get_run(run.info.run_id).data)
