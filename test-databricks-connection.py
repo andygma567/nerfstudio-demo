@@ -14,11 +14,18 @@ parser.add_argument(
     help="Path to the processed data directory",
     default="~/",
 )
+parser.add_argument(
+    "--num-frames-target",
+    help="Target number of frames to use per video",
+    type=int,
+    default=300,
+)
 args = parser.parse_args()
 
 # Set the global variables based on the command line arguments
 DATA_PATH = args.data_path
 PROCESSED_DATA_DIR = args.processed_data_dir
+NUM_FRAMES_TARGET = args.num_frames_target
 
 # To set up Databricks CE authentication, we can use the API mlflow.login(),
 # which will prompt you for required information:
@@ -53,6 +60,7 @@ with mlflow.start_run() as run:
         )
 
     mlflow.set_tag("Dataset", DATA_PATH)
+    mlflow.log_param("num_frames_target", NUM_FRAMES_TARGET)
 
     # execute the preprocessing and training steps
     preprocess_start_time = time.time()
@@ -64,6 +72,8 @@ with mlflow.start_run() as run:
             DATA_PATH,
             "--output-dir",
             PROCESSED_DATA_DIR,
+            "--num-frames-target",
+            str(NUM_FRAMES_TARGET),
         ]
     )
     preprocess_end_time = time.time()
