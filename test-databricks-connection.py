@@ -9,10 +9,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--data-path", help="Path to the video data file", default="~/video.mp4"
 )
+# Sometimes I need to run the terminal command directly before this will work. I don't know why.
 parser.add_argument(
     "--processed-data-dir",
     help="Path to the processed data directory",
-    default="~/",
+    default=".",
 )
 parser.add_argument(
     "--num-frames-target",
@@ -20,12 +21,19 @@ parser.add_argument(
     type=int,
     default=300,
 )
+parser.add_argument(
+    "--max-num-iterations",
+    help="Maximum number of iterations",
+    type=int,
+    default=30000,
+)
 args = parser.parse_args()
 
 # Set the global variables based on the command line arguments
 DATA_PATH = args.data_path
 PROCESSED_DATA_DIR = args.processed_data_dir
 NUM_FRAMES_TARGET = args.num_frames_target
+MAX_NUM_ITERATIONS = args.max_num_iterations
 
 # To set up Databricks CE authentication, we can use the API mlflow.login(),
 # which will prompt you for required information:
@@ -74,6 +82,8 @@ with mlflow.start_run() as run:
             PROCESSED_DATA_DIR,
             "--num-frames-target",
             str(NUM_FRAMES_TARGET),
+            "--matching-method",
+            "sequential",
         ]
     )
     preprocess_end_time = time.time()
@@ -82,8 +92,20 @@ with mlflow.start_run() as run:
 
     mlflow.log_metric("preprocessing_time", preprocessing_time)
 
+    mlflow.log_param("max-num-iterations", MAX_NUM_ITERATIONS)
     start_time = time.time()
-    subprocess.run(["ns-train", "nerfacto", "--data", PROCESSED_DATA_DIR])
+    subprocess.run(
+        [
+            "ns-train",
+            "nerfacto",
+            "--data",
+            PROCESSED_DATA_DIR,
+            "--vis",
+            "tensorboard",  # Using the default viewer prevents the script from continuing
+            "--max-num-iterations",
+            str(MAX_NUM_ITERATIONS),
+        ]
+    )
     end_time = time.time()
     execution_time = end_time - start_time
 
