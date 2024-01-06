@@ -101,7 +101,8 @@ with mlflow.start_run() as run:
             "--data",
             PROCESSED_DATA_DIR,
             "--vis",
-            "tensorboard",  # Using the default viewer prevents the script from continuing
+            "tensorboard",
+            # Using the default viewer prevents the script from continuing
             "--max-num-iterations",
             str(MAX_NUM_ITERATIONS),
         ]
