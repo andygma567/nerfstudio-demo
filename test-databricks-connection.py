@@ -109,8 +109,6 @@ with mlflow.start_run() as run:
     )
     end_time = time.time()
     execution_time = end_time - start_time
-
     mlflow.log_metric("training_time", execution_time)
-    OUTPUTS_DIR = PROCESSED_DATA_DIR + "/outputs/"
 
 print(mlflow.MlflowClient().get_run(run.info.run_id).data)
