@@ -9,7 +9,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--data-path", help="Path to the video data file", default="~/video.mp4"
 )
-# Sometimes I need to run the terminal command directly before this will work. I don't know why.
+# Sometimes I need to run the terminal command directly 
+# before this will work. I don't know why.
 parser.add_argument(
     "--processed-data-dir",
     help="Path to the processed data directory",
@@ -40,10 +41,10 @@ MAX_NUM_ITERATIONS = args.max_num_iterations
 # Databricks Host: Use https://community.cloud.databricks.com/
 # Username: Your email address that signs in Databricks CE.
 # Password: Your password of Databricks CE.
-mlflow.login()
+# mlflow.login()
 
-mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/check-databricks-connection")
+mlflow.set_tracking_uri("")
+mlflow.set_experiment("nerfstudio-demo")
 mlflow.enable_system_metrics_logging()
 
 with mlflow.start_run() as run:
@@ -54,7 +55,7 @@ with mlflow.start_run() as run:
     # Check total available RAM
     ram_info = psutil.virtual_memory()
     total_ram_gb = ram_info.total / (1024**3)
-    mlflow.log_param("ram_total (in GB)", total_ram_gb)
+    mlflow.log_param("ram_total_in_GB", total_ram_gb)
 
     # Check GPU
     try:
