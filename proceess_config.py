@@ -19,7 +19,20 @@ from nerfstudio.models.nerfacto import NerfactoModelConfig, NerfactoModel
 
 # Load the YAML file
 with open('outputs/data/nerfacto/2024-01-15_060326/config.yml', 'r') as file:
-    nerf_config = yaml.load(file, Loader=yaml.FullLoader)
+    nerf_config = yaml.load(file, Loader=yaml.Loader)
 
 # Now `nerf_config` should be an instance of the deserialized Python object
 print(nerf_config)
+
+# Access the `pipeline` section of the config
+nerfacto_model_config = nerf_config.pipeline.model
+print(nerfacto_model_config)
+
+# This doesn't work. I get the following error message:
+# ---------------------------------------------------------------------------
+# TypeError                                 Traceback (most recent call last)
+# Cell In[9], line 1
+# ----> 1 model = NerfactoModel(nerfacto_model_config)
+
+# TypeError: Model.__init__() missing 2 required positional arguments: 'scene_box' and 'num_train_data'
+model = NerfactoModel(nerfacto_model_config)
