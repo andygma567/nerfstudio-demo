@@ -14,19 +14,19 @@ parser.add_argument(
 parser.add_argument(
     "--processed-data-dir",
     help="Path to the processed data directory",
-    default=".",
+    default="./data",
 )
 parser.add_argument(
     "--num-frames-target",
     help="Target number of frames to use per video",
     type=int,
-    default=300,
+    default=50,
 )
 parser.add_argument(
     "--max-num-iterations",
     help="Maximum number of iterations",
     type=int,
-    default=30000,
+    default=300,
 )
 args = parser.parse_args()
 
@@ -111,5 +111,16 @@ with mlflow.start_run() as run:
     end_time = time.time()
     execution_time = end_time - start_time
     mlflow.log_metric("training_time", execution_time)
+    
+    # Log the artifacts directory
+    mlflow.log_artifacts("./outputs", artifact_path="outputs")
+    artifact_path = PROCESSED_DATA_DIR[2:]
+    mlflow.log_artifacts(PROCESSED_DATA_DIR, artifact_path=artifact_path)
 
+print()
 print(mlflow.MlflowClient().get_run(run.info.run_id).data)
+
+# Artifacts can be downloaded from using the run_id and passing in a destination path
+# mlflow.artifacts.download_artifacts(run_id="<id>", dst_path="./<name of dir>")
+
+# I might need to delete local artifacts in-between runs
