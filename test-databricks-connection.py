@@ -3,6 +3,7 @@ import time
 import subprocess
 import argparse
 import psutil
+import os
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()
@@ -35,6 +36,9 @@ DATA_PATH = args.data_path
 PROCESSED_DATA_DIR = args.processed_data_dir
 NUM_FRAMES_TARGET = args.num_frames_target
 MAX_NUM_ITERATIONS = args.max_num_iterations
+
+# This will be used to stop the pod after the run is complete
+RUNPOD_POD_ID = os.environ.get("RUNPOD_POD_ID")
 
 # To set up Databricks CE authentication, we can use the API mlflow.login(),
 # which will prompt you for required information:
@@ -114,13 +118,27 @@ with mlflow.start_run() as run:
     
     # Log the artifacts directory
     mlflow.log_artifacts("./outputs", artifact_path="outputs")
-    artifact_path = PROCESSED_DATA_DIR[2:]
+    artifact_path = PROCESSED_DATA_DIR[2:] 
     mlflow.log_artifacts(PROCESSED_DATA_DIR, artifact_path=artifact_path)
 
 print()
 print(mlflow.MlflowClient().get_run(run.info.run_id).data)
 
+# Attempt to exit the runpod instance after the run is complete
+# The environment variable for the pod doesn't exist in a VS Code terminal
+# but it will exist in a web terminal
+subprocess.run(["runpodctl", "stop", "pod", RUNPOD_POD_ID])
+
 # Artifacts can be downloaded from using the run_id and passing in a destination path
-# mlflow.artifacts.download_artifacts(run_id="<id>", dst_path="./<name of dir>")
+# The dst_path needs to be the same as the artifact_path that was used to log the artifact
+# This is because the configs encode the paths... maybe even the absolute paths
+# mlflow.artifacts.download_artifacts(run_id="<id>", dst_path=".")
 
 # I might need to delete local artifacts in-between runs
+
+# training can be resumed from the downloaded artifacts with a command like the following
+# ns-train nerfacto --data data --load-dir ./outputs/data/nerfacto/2024-01-
+# 20_151735/nerfstudio_models --max-num-iterations 3000
+
+# It's helpful to connect with vs code to the remote machine and then later
+# use the vs code port forwarding. I find it easier than using the ssh -L option
