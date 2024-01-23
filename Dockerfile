@@ -1,5 +1,5 @@
 # Use dromni/nerfstudio:0.3.4 as the base image
-FROM dromni/nerfstudio:main
+FROM dromni/nerfstudio:1.0.0
 
 # Set bash as the default shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -16,7 +16,7 @@ RUN apt-get update && \
     apt-get install -y tree python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118 && \
+    # pip3 install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118 && \
     pip3 install nerfstudio
 
 # These are extra packages that are not required for nerfstudio
