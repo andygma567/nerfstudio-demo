@@ -130,13 +130,16 @@ print(mlflow.MlflowClient().get_run(run.info.run_id).data)
 subprocess.run(["runpodctl", "stop", "pod", RUNPOD_POD_ID])
 
 # Artifacts can be downloaded from using the run_id and passing in a destination path
-# The dst_path needs to be the same as the artifact_path that was used to log the artifact
+# The dst_path needs to be the same as the artifact_path that was used to log the 
+# artifact
+# 
 # This is because the configs encode the paths... maybe even the absolute paths
 # mlflow.artifacts.download_artifacts(run_id="<id>", dst_path=".")
 
 # I might need to delete local artifacts in-between runs
 
-# training can be resumed from the downloaded artifacts with a command like the following
+# training can be resumed from the downloaded artifacts with a command like the 
+# following:
 # ns-train nerfacto --data data --load-dir ./outputs/data/nerfacto/2024-01-
 # 20_151735/nerfstudio_models --max-num-iterations 3000
 
