@@ -6,15 +6,17 @@ import re
 
 def run_command_and_capture_output(command):
 
-    # I need to use pty.openpty() to open a pseudo-terminal
-    # I previously tried to use subprocess.Popen() with stdout=subprocess.PIPE, but it didn't work
-    # I think it has to do with the fact that the command runpodctl send my-data is not writing
-    # to stdout and so I can't read it line by line using subprocess.stdout.readline()
+    # I need to use pty.openpty() to open a pseudo-terminal I previously tried to use
+    # subprocess.Popen() with stdout=subprocess.PIPE, but it didn't work I think it has
+    # to do with the fact that the command runpodctl send my-data is not writing to
+    # stdout and so I can't read it line by line using subprocess.stdout.readline()
     main, secondary = pty.openpty()  # Open a pseudo-terminal
     process = subprocess.Popen(
         command, stdout=secondary, stderr=subprocess.STDOUT, shell=True
     )
-    os.close(secondary)  # Close the slave to ensure we're only communicating via the master
+    os.close(
+        secondary
+    )  # Close the slave to ensure we're only communicating via the master
 
     output = ""
     while True:
@@ -27,7 +29,8 @@ def run_command_and_capture_output(command):
                 # Once we have the specific line, we can break out of the loop
                 break
         except OSError:
-            # This can happen if the subprocess closes its output, or we forcibly close the master
+            # This can happen if the subprocess closes its output, or we forcibly close
+            # the master
             break
 
     process.kill()  # Ensure the subprocess is terminated
