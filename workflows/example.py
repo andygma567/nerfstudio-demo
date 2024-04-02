@@ -4,6 +4,8 @@ from flytekit.types.directory import FlyteDirectory
 from pathlib import Path
 import os
 import subprocess
+import re
+import pty
 
 
 @task()
@@ -32,6 +34,46 @@ def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
     subprocess.run(command, shell=True)
 
     return FlyteDirectory(path=f"{local_dir}")
+
+
+@task()
+def send_data(preprocessed_data: FlyteDirectory) -> str:
+    """Sends the preprocessed data somewhere and returns a string."""
+    # I need to use pty.openpty() to open a pseudo-terminal I previously tried to use
+    # subprocess.Popen() with stdout=subprocess.PIPE, but it didn't work I think it has
+    # to do with the fact that the command runpodctl send my-data is not writing to
+    # stdout and so I can't read it line by line using subprocess.stdout.readline()
+    main, secondary = pty.openpty()  # Open a pseudo-terminal
+    command = f"runpodctl send {preprocessed_data}"
+    process = subprocess.Popen(
+        command, stdout=secondary, stderr=subprocess.STDOUT, shell=True
+    )
+    os.close(
+        secondary
+    )  # Close the secondary to ensure we're only communicating via the main
+
+    output = ""
+    while True:
+        try:
+            # Reading from the main gives us the subprocess's output
+            data = os.read(main, 1024).decode("utf-8")
+            output += data
+            print(data, end="")  # Print the subprocess output in real-time
+            if "On the other computer run" in output:
+                # Once we have the specific line, we can break out of the loop
+                break
+        except OSError:
+            # This can happen if the subprocess closes its output, or we forcibly close
+            # the main
+            break
+
+    process.kill()  # Ensure the subprocess is terminated
+
+    # Attempt to extract the runpodctl receive command
+    receive_command_match = re.search(r"(runpodctl receive [0-9a-z-]+)", output)
+    output = receive_command_match.group(1)
+    print(f"Output: {output}")
+    return output
 
 
 @workflow

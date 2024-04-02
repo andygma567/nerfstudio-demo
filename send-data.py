@@ -4,7 +4,8 @@ import subprocess
 import re
 
 
-def run_command_and_capture_output(command):
+# This needs type annotations  
+def run_command_and_capture_output(command: str) -> str:
 
     # I need to use pty.openpty() to open a pseudo-terminal I previously tried to use
     # subprocess.Popen() with stdout=subprocess.PIPE, but it didn't work I think it has
