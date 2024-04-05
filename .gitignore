@@ -3,3 +3,4 @@
 my-preprocessed-data/
 my-data/
 */__pycache__/
+.vscode/
