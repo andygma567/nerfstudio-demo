@@ -10,10 +10,22 @@ import pty
 
 @task()
 def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
-    """Takes in a raw dataset and returns a preprocessed dataset."""
+    """
+    Takes in a raw dataset and returns a preprocessed dataset.
+
+    Parameters
+    ----------
+    raw_data_dir : FlyteDirectory
+        The directory containing the raw dataset.
+
+    Returns
+    -------
+    FlyteDirectory
+        The directory containing the preprocessed dataset.
+    """
     print(f"Preprocessing data in {raw_data_dir}")
 
-    # get the working directory of the current execution
+    # Get the working directory of the current execution
     # https://docs.flyte.org/en/latest/api/flytekit/generated/flytekit.ExecutionParameters.html#flytekit-executionparameters
     print(f"Working directory: {flytekit.current_context().working_directory}")
     working_dir = flytekit.current_context().working_directory
@@ -27,8 +39,6 @@ def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
     print(f"Local directory: {local_dir}")
 
     # Use the nerfstudio command for preprocessing data
-    # This is the command that I need to execute
-    # ns-process-data record3d --data 2024-03-17--18-25-12/EXR_RGBD --output-dir my-data
     print(f"Preprocessing data in {raw_data_dir}")
     command = f"ns-process-data record3d --data {raw_data_dir} --output-dir {local_dir}"
     subprocess.run(command, shell=True)
@@ -38,7 +48,26 @@ def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
 
 @task()
 def send_data(preprocessed_data: FlyteDirectory) -> str:
-    """Sends the preprocessed data somewhere and returns a string."""
+    """
+    Sends the preprocessed data to runpod and returns a string.
+
+    Parameters
+    ----------
+    preprocessed_data : FlyteDirectory
+        The preprocessed data to be sent.
+
+    Returns
+    -------
+    str
+        The output of the subprocess command. This is a string that needs to be run in a
+        runpod pod instance in order to receive the sent data.
+
+    Raises
+    ------
+    OSError
+        If the subprocess closes its output or the main is forcibly closed.
+    """
+
     # I need to use pty.openpty() to open a pseudo-terminal I previously tried to use
     # subprocess.Popen() with stdout=subprocess.PIPE, but it didn't work I think it has
     # to do with the fact that the command runpodctl send my-data is not writing to
@@ -84,6 +113,6 @@ def wf(dir: FlyteDirectory) -> FlyteDirectory:
 
 
 if __name__ == "__main__":
-    # Execute the workflow by invoking it like a function and passing in
-    # the necessary parameters
+    # Execute the workflow by invoking it like a function and passing in the necessary
+    # parameters
     print(f"Running wf() {wf(dir='2024-03-17--18-25-12/EXR_RGBD')}")

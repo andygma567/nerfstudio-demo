@@ -78,7 +78,7 @@ def test_send_data(tmp_path):
     information, refer to the documentation:
     https://docs.flyte.org/en/latest/user_guide/data_types_and_io/index.html
     """
-    # Arrange 
+    # Arrange  
     # Act
     output = send_data(preprocessed_data=tmp_path)
     # Assert
