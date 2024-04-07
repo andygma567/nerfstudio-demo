@@ -1,4 +1,0 @@
-python=3.11
-nerfstudio # compatible with 3.11
-# compatible with 3.11, I think it's important to not use pip install -U with this package install 
-flytekit 

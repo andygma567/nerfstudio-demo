@@ -6,7 +6,8 @@ import os
 import subprocess
 import re
 import pty
-
+import runpod
+from pprint import pformat
 
 @task()
 def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
@@ -103,6 +104,41 @@ def send_data(preprocessed_data: FlyteDirectory) -> str:
     output = receive_command_match.group(1)
     print(f"Output: {output}")
     return output
+
+
+@task(container_image="pipelinepilot/flyte-task")
+def trigger_runpod(api_key: str, receive_command: str) -> str:
+    """
+    Triggers a runpod pod instance and returns a string.
+    """
+    # Get the flyte execution id in order to use it as a unique name for the
+    # mlflow run
+    execution_id_name = flytekit.current_context().execution_id.name
+    print(f"execution_id_name: {execution_id_name}")
+
+    # Create a run pod instance
+    runpod.api_key = api_key
+    print("creating pod")
+    pod = runpod.create_pod(
+        name="test-pod",
+        image_name="pipelinepilot/hello-world-amd64",
+        gpu_type_id="NVIDIA GeForce RTX 3070",
+        env={
+            "RECEIVE_COMMAND": f"{receive_command}",
+            # I need to see if I need to pass in the mlflow auth from an environment
+            # variable I guess
+            "USERNAME": "<USERNAME>", 
+            "PASSWORD": "<PASSWORD>",
+            "FLYTE_EXECUTION_ID": f"{execution_id_name}",
+        },
+    )
+
+    # Get all my pods
+    # pods = runpod.get_pods()
+    pod_str = pformat(pod)
+
+    return pod_str
+
 
 
 @workflow
