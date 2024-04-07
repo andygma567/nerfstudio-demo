@@ -37,3 +37,11 @@ runpod
 # packages such as runpod or flytekit and botocore Also conda doesn't seem to have these
 # packages so I don't know what to do
 ```
+
+## Testing structure
+
+I'm trying out using a conftest.py file. I think it allows me to run tests from directories other than where the unit test is located becasue pytest will adjust a PATH on the fly? I might need to change this later. I don't know
+
+- https://docs.pytest.org/en/8.0.x/explanation/pythonpath.html
+- https://stackoverflow.com/questions/34466027/what-is-conftest-py-for-in-pytest
+
