@@ -9,6 +9,7 @@ import pty
 import runpod
 from pprint import pformat
 
+
 @task()
 def preprocess_data(raw_data_dir: FlyteDirectory) -> FlyteDirectory:
     """
@@ -127,7 +128,7 @@ def trigger_runpod(api_key: str, receive_command: str) -> str:
             "RECEIVE_COMMAND": f"{receive_command}",
             # I need to see if I need to pass in the mlflow auth from an environment
             # variable I guess
-            "USERNAME": "<USERNAME>", 
+            "USERNAME": "<USERNAME>",
             "PASSWORD": "<PASSWORD>",
             "FLYTE_EXECUTION_ID": f"{execution_id_name}",
         },
@@ -138,7 +139,6 @@ def trigger_runpod(api_key: str, receive_command: str) -> str:
     pod_str = pformat(pod)
 
     return pod_str
-
 
 
 @workflow
