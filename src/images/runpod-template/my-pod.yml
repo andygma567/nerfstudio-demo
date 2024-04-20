@@ -6,7 +6,11 @@ metadata:
     app: runpod-template-images
 spec:
   containers:
-  - name: runpod-template-images-container
-    image: pipelinepilot/runpod-template-images
-    ports:
-    - containerPort: 8888
+    - name: runpod-template-images-container
+      image: pipelinepilot/runpod-template-images
+      ports:
+        - containerPort: 8888
+      resources:
+        limits:
+          cpu: "1"
+          memory: "1Gi"

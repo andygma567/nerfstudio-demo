@@ -1,0 +1,29 @@
+apiVersion: skaffold/v4beta9
+kind: Config
+metadata:
+  name: nerfstudio-demo
+build:
+  artifacts:
+  - image: pipelinepilot/runpod-template-images
+    context: src/images/flyte-task-images/trigger_runpod
+    sync:
+      infer:
+      - '**/*.sh'
+    docker:
+      dockerfile: Dockerfile
+  - image: pipelinepilot/preprocess_data
+    context: src/images/flyte-task-images/preprocess_data
+    docker:
+      dockerfile: Dockerfile
+    sync: {}
+  - image: pipelinepilot/trigger_runpod
+    context: src/images/flyte-task-images/trigger_runpod
+    docker:
+      dockerfile: Dockerfile
+    sync: {}
+  local:
+    push: false
+    concurrency: 0
+manifests:
+  rawYaml:
+  - my-pod.yml
