@@ -162,7 +162,7 @@ def test_wf():
         mock.return_value = "mocked_output"
         wf_output = wf(dir=raw_data_dir)
     print("wf_output: ", wf_output)
-    
+
     # Assert
     assert wf_output != ""
 
