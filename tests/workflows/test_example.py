@@ -20,7 +20,6 @@ from src.workflows.example import preprocess_data, send_data, trigger_runpod, wf
 from src.workflows import example
 import os
 import glob
-import pytest
 
 
 def test_preprocess_data():
@@ -98,7 +97,7 @@ def test_send_data(tmp_path):
         os.remove(file)
 
 
-@pytest.mark.skip(reason="This test requires runpod api to be installed.")
+# @pytest.mark.skip(reason="This test requires runpod api to be installed.")
 def test_trigger_runpod(monkeypatch):
     # Mock the create_pod method
     mock_create_pod = Mock()
@@ -161,7 +160,7 @@ def test_wf():
     with task_mock(trigger_runpod) as mock:
         mock.return_value = "mocked_output"
         wf_output = wf(dir=raw_data_dir)
-    print("wf_output: ", wf_output)
+    print("\nwf_output: ", wf_output)
 
     # Assert
     assert wf_output != ""
