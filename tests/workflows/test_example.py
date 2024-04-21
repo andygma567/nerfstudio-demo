@@ -8,7 +8,7 @@ and check that the logic holds.
 You may also need to write an end-to-end test later. However, it is unclear how to
 end-to-end test the result of runpod.
 
-These tests could be improved by using fixtures to set up the test data and clean up. 
+These tests could be improved by using fixtures to set up the test data and clean up.
 For example, you could use a fixture to copy the test data to a temporary directory and
 then use a teardown feature to clean up the generated zip files.
 """
