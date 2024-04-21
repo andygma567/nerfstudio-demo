@@ -111,6 +111,18 @@ def send_data(preprocessed_data: FlyteDirectory) -> str:
 def trigger_runpod(api_key: str, receive_command: str) -> str:
     """
     Triggers a runpod pod instance and returns a string.
+
+    Parameters
+    ----------
+    api_key : str
+        The API key for authentication.
+    receive_command : str
+        The command to be passed to the pod.
+
+    Returns
+    -------
+    str
+        A string representation of the pods running on runpod.
     """
     # Get the flyte execution id in order to use it as a unique name for the
     # mlflow run
@@ -142,10 +154,27 @@ def trigger_runpod(api_key: str, receive_command: str) -> str:
 
 
 @workflow
-def wf(dir: FlyteDirectory) -> FlyteDirectory:
+def wf(dir: FlyteDirectory) -> str:
+    """
+    Flyte workflow that takes in a FlyteDirectory of raw data (RGB-D) and outputs a
+    string listing all of the currently running pods on Run Pod.
+
+    Parameters
+    ----------
+    dir : FlyteDirectory
+        The directory containing the raw data.
+
+    Returns
+    -------
+    str
+        A string listing all of the currently running pods on Run Pod.
+    """
     # I'm going to try to use this to pass in strings to a directory and see what
     # happens
-    return preprocess_data(raw_data_dir=dir)
+    preprocessed_data = preprocess_data(raw_data_dir=dir)
+    receive_command = send_data(preprocessed_data=preprocessed_data)
+    pod_str = trigger_runpod(api_key="<API_KEY>", receive_command=receive_command)
+    return pod_str
 
 
 if __name__ == "__main__":

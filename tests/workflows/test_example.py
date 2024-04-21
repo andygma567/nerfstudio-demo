@@ -7,11 +7,16 @@ and check that the logic holds.
 
 You may also need to write an end-to-end test later. However, it is unclear how to
 end-to-end test the result of runpod.
+
+These tests could be improved by using fixtures to set up the test data and clean up. 
+For example, you could use a fixture to copy the test data to a temporary directory and
+then use a teardown feature to clean up the generated zip files.
 """
 
+from flytekit.testing import task_mock
 from unittest import mock
 from unittest.mock import Mock
-from src.workflows.example import preprocess_data, send_data, trigger_runpod
+from src.workflows.example import preprocess_data, send_data, trigger_runpod, wf
 from src.workflows import example
 import os
 import glob
@@ -119,3 +124,48 @@ def test_trigger_runpod(monkeypatch):
 
     # Check that the returned string is not empty
     assert pod_str != ""
+
+
+def test_wf():
+    """
+    Test the wf workflow.
+
+    This test is designed to test a flyte workflow named `wf`. The workflow takes an
+    input that's a FlyteDirectory of preprocessed data and then outputs a string that
+    describes all of the run pod pods that are running.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        The temporary directory path for the test.
+
+    Raises
+    ------
+    AssertionError
+        If any of the assertions fail.
+
+    Returns
+    -------
+    None
+
+    """
+    # Arrange
+    raw_data_dir = (
+        "/Users/andrewma/Desktop/nerfstudio-demo/2024-03-17--18-25-12/EXR_RGBD"
+    )
+
+    # Act
+    # Call the wf workflow with the input directory The wf should output the string
+    # representation of the pods running on runpod
+    # We mock the trigger_runpod task to avoid actually triggering a runpod
+    with task_mock(trigger_runpod) as mock:
+        mock.return_value = "mocked_output"
+        wf_output = wf(dir=raw_data_dir)
+    print("wf_output: ", wf_output)
+    
+    # Assert
+    assert wf_output != ""
+
+    # Teardown
+    for file in glob.glob("*.zip"):
+        os.remove(file)
